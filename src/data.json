@@ -1,0 +1,34 @@
+{
+  "sounds": [
+    {
+      "id": "rain",
+      "name": "Rain",
+      "file": "/sounds/rain.mp3"
+    },
+    {
+      "id": "ocean",
+      "name": "Ocean Waves",
+      "file": "/sounds/ocean-waves.mp3"
+    },
+    {
+      "id": "forest",
+      "name": "Forest Birds",
+      "file": "/sounds/forest.mp3"
+    },
+    {
+      "id": "fire",
+      "name": "Crackling Fire",
+      "file": "/sounds/fire.mp3"
+    },
+    {
+      "id": "wind",
+      "name": "Wind",
+      "file": "/sounds/wind.mp3"
+    },
+    {
+      "id": "thunder",
+      "name": "Thunderstorm",
+      "file": "/sounds/thunderstorm.mp3"
+    }
+  ]
+}
