@@ -5,9 +5,9 @@ import { useApp } from "../context/AppContext";
 interface HeaderProps {}
 
 export function Header(_props: HeaderProps) {
-  const { state } = useApp();
+  const { sounds } = useApp();
 
-  const activeSoundsCount = state.sounds.filter((s) => s.isPlaying).length;
+  const activeSoundsCount = sounds.filter((s) => s.isPlaying).length;
 
   return (
     <div className="flex items-center justify-between mb-16 max-w-4xl mx-auto pt-4">

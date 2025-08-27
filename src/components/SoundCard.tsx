@@ -1,7 +1,6 @@
 import clsx from "clsx";
 import { Download, Loader, Pause, Play, Volume2, VolumeX } from "lucide-react";
 import { useApp } from "../context/AppContext";
-import { useAudio } from "../hooks/useAudio";
 import { VolumeSlider } from "./VolumeSlider";
 
 interface SoundCardProps {
@@ -21,12 +20,11 @@ export function SoundCard({
   isLoaded,
   isLoading,
 }: SoundCardProps) {
-  const { dispatch } = useApp();
-  const { loadSound } = useAudio();
+  const { toggleSound, setVolume, loadSound } = useApp();
 
   const handleToggleSound = () => {
     if (!isLoaded) return; // Only allow playing if sound is loaded
-    dispatch({ type: "TOGGLE_SOUND", soundId });
+    toggleSound(soundId);
   };
 
   const handleLoadSound = () => {
@@ -36,7 +34,7 @@ export function SoundCard({
   };
 
   const handleVolumeChange = (newVolume: number) => {
-    dispatch({ type: "SET_VOLUME", soundId, volume: newVolume });
+    setVolume(soundId, newVolume);
   };
 
   return (
@@ -59,7 +57,7 @@ export function SoundCard({
         {/* Header with load/play button and title */}
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-white font-semibold text-lg">{name}</h3>
-          
+
           {!isLoaded ? (
             // Load button when sound is not loaded
             <button
@@ -108,16 +106,20 @@ export function SoundCard({
             disabled={!isLoaded}
             className={clsx(
               "p-2 rounded-lg transition-colors duration-200",
-              isLoaded 
-                ? "hover:bg-white/10" 
-                : "opacity-50 cursor-not-allowed"
+              isLoaded ? "hover:bg-white/10" : "opacity-50 cursor-not-allowed"
             )}
             style={{ minWidth: "40px", minHeight: "40px" }}
           >
             {volume > 0 ? (
-              <Volume2 size={16} className={isLoaded ? "text-gray-300" : "text-gray-500"} />
+              <Volume2
+                size={16}
+                className={isLoaded ? "text-gray-300" : "text-gray-500"}
+              />
             ) : (
-              <VolumeX size={16} className={isLoaded ? "text-gray-500" : "text-gray-600"} />
+              <VolumeX
+                size={16}
+                className={isLoaded ? "text-gray-500" : "text-gray-600"}
+              />
             )}
           </button>
 
@@ -128,10 +130,12 @@ export function SoundCard({
             ariaLabel={`Volume for ${name}`}
           />
 
-          <span className={clsx(
-            "text-xs min-w-8 text-center",
-            isLoaded ? "text-gray-400" : "text-gray-500"
-          )}>
+          <span
+            className={clsx(
+              "text-xs min-w-8 text-center",
+              isLoaded ? "text-gray-400" : "text-gray-500"
+            )}
+          >
             {Math.round(volume * 100)}%
           </span>
         </div>

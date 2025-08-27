@@ -1,18 +1,13 @@
 import { useEffect } from "react";
 import { useApp } from "../context/AppContext";
-import { useAudio } from "../hooks/useAudio";
-import { useTimer } from "../hooks/useTimer";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { Footer } from "./Footer";
 import { Header } from "./Header";
 import { SoundGrid } from "./SoundGrid";
 
 function App() {
-  const { state } = useApp();
+  const { sounds } = useApp();
   const { getItem, setItem } = useLocalStorage();
-
-  useAudio();
-  useTimer();
 
   // Load saved preferences
   useEffect(() => {
@@ -26,13 +21,13 @@ function App() {
 
   // Save sound preferences
   useEffect(() => {
-    const soundPreferences = state.sounds.map(({ id, volume, isPlaying }) => ({
+    const soundPreferences = sounds.map(({ id, volume, isPlaying }) => ({
       id,
       volume,
       isPlaying,
     }));
     setItem("soundPreferences", soundPreferences);
-  }, [state.sounds, setItem]);
+  }, [sounds, setItem]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/20 to-gray-900">

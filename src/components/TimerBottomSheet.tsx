@@ -3,7 +3,6 @@ import { Clock, Timer, X } from "lucide-react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useApp } from "../context/AppContext";
-import { useTimer } from "../hooks/useTimer";
 
 const PRESET_MINUTES = [15, 30, 45, 60, 90];
 const MAX_TIMER_MINUTES = 999;
@@ -15,8 +14,16 @@ interface ValidationError {
 }
 
 export const TimerBottomSheet = React.memo(function TimerBottomSheet() {
-  const { state, dispatch } = useApp();
-  const { startTimer, stopTimer, formatTime, getProgress } = useTimer();
+  const {
+    timerRemaining,
+    isTimerActive,
+    isTimerBottomSheetOpen,
+    toggleTimerBottomSheet,
+    startTimer,
+    stopTimer,
+    formatTime,
+    getProgress,
+  } = useApp();
 
   // State management
   const [customMinutes, setCustomMinutes] = useState<string>("");
@@ -32,14 +39,14 @@ export const TimerBottomSheet = React.memo(function TimerBottomSheet() {
 
   // Memoized handlers
   const handleClose = useCallback(() => {
-    dispatch({ type: "TOGGLE_TIMER_BOTTOM_SHEET" });
+    toggleTimerBottomSheet();
     setCustomMinutes("");
     setValidationError(null);
-  }, [dispatch]);
+  }, [toggleTimerBottomSheet]);
 
   const handleToggleModal = useCallback(() => {
-    dispatch({ type: "TOGGLE_TIMER_BOTTOM_SHEET" });
-  }, [dispatch]);
+    toggleTimerBottomSheet();
+  }, [toggleTimerBottomSheet]);
 
   const validateCustomInput = useCallback(
     (value: string): ValidationError | null => {
@@ -70,10 +77,10 @@ export const TimerBottomSheet = React.memo(function TimerBottomSheet() {
   );
 
   const handlePresetClick = useCallback(
-    async (minutes: number) => {
+    (minutes: number) => {
       setIsLoading(true);
       try {
-        await startTimer(minutes);
+        startTimer(minutes);
         handleClose();
       } catch (error) {
         console.error("Failed to start timer:", error);
@@ -88,7 +95,7 @@ export const TimerBottomSheet = React.memo(function TimerBottomSheet() {
     [startTimer, handleClose]
   );
 
-  const handleCustomTimer = useCallback(async () => {
+  const handleCustomTimer = useCallback(() => {
     const error = validateCustomInput(customMinutes);
     if (error && error.type === "error") {
       setValidationError(error);
@@ -99,7 +106,7 @@ export const TimerBottomSheet = React.memo(function TimerBottomSheet() {
     setIsLoading(true);
 
     try {
-      await startTimer(minutes);
+      startTimer(minutes);
       handleClose();
     } catch (error) {
       console.error("Failed to start custom timer:", error);
@@ -156,7 +163,7 @@ export const TimerBottomSheet = React.memo(function TimerBottomSheet() {
 
   // Focus management
   useEffect(() => {
-    if (state.isTimerBottomSheetOpen) {
+    if (isTimerBottomSheetOpen) {
       // Focus the first focusable element when modal opens
       setTimeout(() => {
         firstFocusableRef.current?.focus();
@@ -171,11 +178,11 @@ export const TimerBottomSheet = React.memo(function TimerBottomSheet() {
     return () => {
       document.body.style.overflow = "";
     };
-  }, [state.isTimerBottomSheetOpen]);
+  }, [isTimerBottomSheetOpen]);
 
   // Focus trap
   useEffect(() => {
-    if (!state.isTimerBottomSheetOpen) return;
+    if (!isTimerBottomSheetOpen) return;
 
     const handleTab = (e: KeyboardEvent) => {
       if (e.key === "Tab" && modalRef.current) {
@@ -199,10 +206,10 @@ export const TimerBottomSheet = React.memo(function TimerBottomSheet() {
 
     document.addEventListener("keydown", handleTab);
     return () => document.removeEventListener("keydown", handleTab);
-  }, [state.isTimerBottomSheetOpen]);
+  }, [isTimerBottomSheetOpen]);
 
   // Render modal content
-  const modalContent = state.isTimerBottomSheetOpen ? (
+  const modalContent = isTimerBottomSheetOpen ? (
     <>
       {/* Backdrop */}
       <div
@@ -238,10 +245,14 @@ export const TimerBottomSheet = React.memo(function TimerBottomSheet() {
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
-              {state.timer.isActive ? (
+              {isTimerActive ? (
                 <>
                   <div className="relative">
-                    <Clock size={24} className="text-green-400" aria-hidden="true" />
+                    <Clock
+                      size={24}
+                      className="text-green-400"
+                      aria-hidden="true"
+                    />
                     <div className="absolute -inset-1 bg-green-400/20 rounded-full animate-pulse" />
                   </div>
                   <h2
@@ -253,7 +264,11 @@ export const TimerBottomSheet = React.memo(function TimerBottomSheet() {
                 </>
               ) : (
                 <>
-                  <Clock size={24} className="text-blue-400" aria-hidden="true" />
+                  <Clock
+                    size={24}
+                    className="text-blue-400"
+                    aria-hidden="true"
+                  />
                   <h2
                     id="timer-modal-title"
                     className="text-xl font-semibold text-white"
@@ -266,14 +281,16 @@ export const TimerBottomSheet = React.memo(function TimerBottomSheet() {
             <button
               ref={firstFocusableRef}
               onClick={handleClose}
-              aria-label={state.timer.isActive ? "Close timer view" : "Close timer settings"}
+              aria-label={
+                isTimerActive ? "Close timer view" : "Close timer settings"
+              }
               className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
             >
               <X size={20} className="text-gray-300" aria-hidden="true" />
             </button>
           </div>
 
-          {state.timer.isActive ? (
+          {isTimerActive ? (
             /* Timer Running View */
             <>
               <div id="timer-modal-description" className="sr-only">
@@ -283,7 +300,7 @@ export const TimerBottomSheet = React.memo(function TimerBottomSheet() {
               {/* Simple Timer Display */}
               <div className="text-center mb-8">
                 <div className="text-6xl font-bold text-white mb-4">
-                  {formatTime(state.timer.remaining)}
+                  {formatTime(timerRemaining)}
                 </div>
                 <div className="text-gray-400 text-sm">
                   {Math.round(getProgress())}% complete
@@ -358,14 +375,17 @@ export const TimerBottomSheet = React.memo(function TimerBottomSheet() {
               {/* Custom timer input */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-medium text-gray-300">Custom Timer</h3>
+                  <h3 className="text-sm font-medium text-gray-300">
+                    Custom Timer
+                  </h3>
                   {customMinutes && !validationError && (
                     <span className="text-xs text-blue-400 font-medium">
-                      {customMinutes} minute{parseInt(customMinutes) !== 1 ? 's' : ''}
+                      {customMinutes} minute
+                      {parseInt(customMinutes) !== 1 ? "s" : ""}
                     </span>
                   )}
                 </div>
-                
+
                 <div className="relative">
                   <div className="flex space-x-3">
                     <div className="flex-1 relative">
@@ -376,7 +396,12 @@ export const TimerBottomSheet = React.memo(function TimerBottomSheet() {
                         value={customMinutes}
                         onChange={handleCustomInputChange}
                         onKeyDown={(e) => {
-                          if (e.key === 'Enter' && !isLoading && customMinutes && validationError?.type !== 'error') {
+                          if (
+                            e.key === "Enter" &&
+                            !isLoading &&
+                            customMinutes &&
+                            validationError?.type !== "error"
+                          ) {
                             handleCustomTimer();
                           }
                         }}
@@ -392,7 +417,7 @@ export const TimerBottomSheet = React.memo(function TimerBottomSheet() {
                           "focus:outline-none focus:ring-2 backdrop-blur-sm",
                           "disabled:opacity-50 disabled:cursor-not-allowed",
                           // Dynamic background based on state
-                          isLoading 
+                          isLoading
                             ? "bg-gray-600/20 border-gray-500/30"
                             : validationError?.type === "error"
                             ? "bg-red-500/10 border-red-500/50 focus:border-red-500 focus:ring-red-400/50"
@@ -407,7 +432,7 @@ export const TimerBottomSheet = React.memo(function TimerBottomSheet() {
                         max={MAX_TIMER_MINUTES}
                         step="1"
                       />
-                      
+
                       {/* Clear button */}
                       {customMinutes && !isLoading && (
                         <button
@@ -423,7 +448,7 @@ export const TimerBottomSheet = React.memo(function TimerBottomSheet() {
                         </button>
                       )}
                     </div>
-                    
+
                     <button
                       onClick={handleCustomTimer}
                       disabled={
@@ -457,7 +482,7 @@ export const TimerBottomSheet = React.memo(function TimerBottomSheet() {
                       )}
                     </button>
                   </div>
-                  
+
                   {/* Help text and validation */}
                   <div className="mt-2 min-h-[20px]">
                     {validationError ? (
@@ -465,7 +490,9 @@ export const TimerBottomSheet = React.memo(function TimerBottomSheet() {
                         id="custom-timer-help"
                         className={clsx(
                           "text-xs font-medium flex items-center space-x-1",
-                          validationError.type === "error" ? "text-red-400" : "text-yellow-400"
+                          validationError.type === "error"
+                            ? "text-red-400"
+                            : "text-yellow-400"
                         )}
                       >
                         <span>⚠</span>
@@ -476,7 +503,8 @@ export const TimerBottomSheet = React.memo(function TimerBottomSheet() {
                         id="custom-timer-help"
                         className="text-xs text-gray-500"
                       >
-                        Enter {MIN_TIMER_MINUTES}-{MAX_TIMER_MINUTES} minutes • Press Enter to start
+                        Enter {MIN_TIMER_MINUTES}-{MAX_TIMER_MINUTES} minutes •
+                        Press Enter to start
                       </div>
                     )}
                   </div>
@@ -497,29 +525,33 @@ export const TimerBottomSheet = React.memo(function TimerBottomSheet() {
       {/* Timer Button */}
       <button
         onClick={handleToggleModal}
-        aria-label={state.timer.isActive ? "Timer running - click to view" : "Open timer settings"}
+        aria-label={
+          isTimerActive
+            ? "Timer running - click to view"
+            : "Open timer settings"
+        }
         className={clsx(
           "p-3 rounded-2xl transition-all duration-200 transform relative",
           "active:scale-90 hover:scale-105",
           "backdrop-blur-sm border",
           "focus:outline-none focus:ring-2",
           // Dynamic styling based on timer state
-          state.timer.isActive
+          isTimerActive
             ? [
                 "bg-gradient-to-br from-green-500/30 to-emerald-500/30",
                 "hover:from-green-500/40 hover:to-emerald-500/40",
                 "border-green-400/30 focus:ring-green-400",
-                "shadow-lg shadow-green-500/20"
+                "shadow-lg shadow-green-500/20",
               ]
             : [
                 "bg-gradient-to-br from-purple-500/20 to-pink-500/20",
                 "hover:from-purple-500/30 hover:to-pink-500/30",
-                "border-white/10 focus:ring-purple-400"
+                "border-white/10 focus:ring-purple-400",
               ]
         )}
         style={{ minWidth: "48px", minHeight: "48px" }}
       >
-        {state.timer.isActive ? (
+        {isTimerActive ? (
           <>
             {/* Pulsing animation ring for active timer */}
             <div className="absolute inset-0 rounded-2xl bg-green-400/20 animate-pulse" />
