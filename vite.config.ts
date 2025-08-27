@@ -11,7 +11,7 @@ export default defineConfig({
       registerType: "autoUpdate",
       manifest,
       workbox: {
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,mp3}"],
+        globPatterns: ["**/*.{js,css,html,ico,png,svg}"], // Exclude mp3 from precaching
         runtimeCaching: [
           {
             urlPattern: /\.(?:mp3|wav|ogg)$/i,
