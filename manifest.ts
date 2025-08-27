@@ -54,11 +54,47 @@ export const manifest: Partial<ManifestOptions> = {
 
   screenshots: [
     {
-      src: "/icons/windows11/SplashScreen.scale-200.png",
-      sizes: "1240x600",
-      type: "image/png",
+      src: "/screenshots/1.jpg",
+      sizes: "390x844",
+      type: "image/jpeg",
+      form_factor: "narrow",
+      label: "Escape ambient sound mixer - Main interface with nature sounds",
+    },
+    {
+      src: "/screenshots/2.jpg",
+      sizes: "390x844",
+      type: "image/jpeg",
+      form_factor: "narrow",
+      label: "Timer and sound mixing controls - Focus mode",
+    },
+    {
+      src: "/screenshots/3.jpg",
+      sizes: "390x844",
+      type: "image/jpeg",
+      form_factor: "narrow",
+      label: "Nature sounds collection - Rain, forest, ocean waves",
+    },
+    // Add wide screenshots for desktop
+    {
+      src: "/screenshots/1.jpg",
+      sizes: "1280x720",
+      type: "image/jpeg",
       form_factor: "wide",
-      label: "Escape ambient sound mixer interface",
+      label: "Escape desktop interface - Full ambient sound mixer",
+    },
+    {
+      src: "/screenshots/2.jpg",
+      sizes: "390x844",
+      type: "image/jpeg",
+      form_factor: "wide",
+      label: "Timer and sound mixing controls - Focus mode",
+    },
+    {
+      src: "/screenshots/3.jpg",
+      sizes: "390x844",
+      type: "image/jpeg",
+      form_factor: "wide",
+      label: "Nature sounds collection - Rain, forest, ocean waves",
     },
   ],
 
