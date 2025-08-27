@@ -1,6 +1,6 @@
-# Premium Nature Sounds App
+# Escape
 
-A mobile-first React.js web application for sleep and relaxation with professional audio mixing and timer functionality.
+A mobile-first React.js web application for sleep and relaxation with professional audio mixing and timer functionality. Escape from daily stress into peaceful natural soundscapes.
 
 ## Features
 
