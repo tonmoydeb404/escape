@@ -23,6 +23,10 @@
   }
 }
 
+body {
+  @apply font-sans;
+}
+
 .animate-slide-up {
   animation: slide-up 0.3s ease-out;
 }
@@ -49,7 +53,7 @@
   .hover\:scale-105:hover {
     transform: scale(1.05);
   }
-  
+
   .hover\:scale-110:hover {
     transform: scale(1.1);
   }
@@ -89,7 +93,7 @@
   .bg-gradient-to-br {
     background: #1a202c !important;
   }
-  
+
   .border-white\/10 {
     border-color: rgba(255, 255, 255, 0.3) !important;
   }
@@ -98,7 +102,7 @@
 /* Focus styles for accessibility */
 button:focus-visible,
 input:focus-visible {
-  outline: 2px solid #3B82F6;
+  outline: 2px solid #3b82f6;
   outline-offset: 2px;
 }
 

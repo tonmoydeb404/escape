@@ -2,10 +2,10 @@ import { ManifestOptions } from "vite-plugin-pwa";
 import iconsData from "./public/icons/icons.json";
 
 export const manifest: Partial<ManifestOptions> = {
-  name: "Escape - Ambient Sound Mixer",
+  name: "Escape - Nature's Calm, Anywhere",
   short_name: "Escape",
   description:
-    "Create your perfect ambient soundscape for focus, relaxation, and productivity. Mix nature sounds with a built-in timer.",
+    "Nature's Calm, Anywhere. Create your perfect ambient soundscape for focus, relaxation, and productivity. Mix nature sounds with a built-in timer.",
   theme_color: "#1e293b",
   background_color: "#0f172a",
   display: "standalone",

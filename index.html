@@ -7,19 +7,19 @@
   <link rel="icon" type="image/svg+xml" href="/icons/logo.svg" />
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/ios/32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="/icons/ios/16.png" />
-  
+
   <!-- PWA Meta -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#1e293b" />
   <meta name="msapplication-TileColor" content="#1e293b" />
   <meta name="description"
-    content="Create your perfect ambient soundscape for focus, relaxation, and productivity. Mix nature sounds with a built-in timer." />
-  <title>Escape - Ambient Sound Mixer</title>
+    content="Nature's Calm, Anywhere. Create your perfect ambient soundscape for focus, relaxation, and productivity. Mix nature sounds with a built-in timer." />
+  <title>Escape - Nature's Calm, Anywhere</title>
 
   <!-- Mobile Web App -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="Escape">
-  
+
   <!-- Apple Touch -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -33,7 +33,7 @@
   <link rel="apple-touch-icon" sizes="72x72" href="/icons/ios/72.png">
   <link rel="apple-touch-icon" sizes="60x60" href="/icons/ios/60.png">
   <link rel="apple-touch-icon" sizes="57x57" href="/icons/ios/57.png">
-  
+
   <!-- Microsoft Tiles -->
   <meta name="msapplication-TileImage" content="/icons/windows11/Square150x150Logo.scale-200.png">
   <meta name="msapplication-square70x70logo" content="/icons/windows11/SmallTile.scale-100.png">
@@ -46,6 +46,16 @@
 
   <!-- Preload critical resources -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Preload most critical font weights -->
+  <link rel="preload" as="style"
+    href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"
+    media="print" onload="this.media='all'">
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet">
+  </noscript>
 
   <style>
     /* Prevent flash of unstyled content */
@@ -53,26 +63,61 @@
       background: #0F1419;
       margin: 0;
       padding: 0;
+      font-family: 'Work Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
     }
 
     /* Loading screen */
     #loading {
       position: fixed;
       inset: 0;
-      background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       z-index: 9999;
     }
 
+    .loading-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .loading-logo {
+      width: 80px;
+      height: 80px;
+      animation: logoFloat 3s ease-in-out infinite;
+    }
+
+    .loading-text {
+      text-align: center;
+    }
+
+    .loading-title {
+      color: #ffffff;
+      font-size: 32px;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: -0.025em;
+    }
+
+    .loading-tagline {
+      color: #94a3b8;
+      font-size: 16px;
+      margin: 8px 0 0 0;
+      font-weight: 500;
+    }
+
     .loading-spinner {
-      width: 40px;
-      height: 40px;
-      border: 3px solid rgba(59, 130, 246, 0.3);
+      width: 32px;
+      height: 32px;
+      border: 2px solid rgba(59, 130, 246, 0.2);
       border-radius: 50%;
       border-top-color: #3b82f6;
       animation: spin 1s linear infinite;
+      margin-top: 16px;
     }
 
     @keyframes spin {
@@ -80,12 +125,48 @@
         transform: rotate(360deg);
       }
     }
+
+    @keyframes logoFloat {
+
+      0%,
+      100% {
+        transform: translateY(0px);
+        opacity: 0.9;
+      }
+
+      50% {
+        transform: translateY(-8px);
+        opacity: 1;
+      }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+      .loading-logo {
+        width: 64px;
+        height: 64px;
+      }
+
+      .loading-title {
+        font-size: 28px;
+      }
+
+      .loading-tagline {
+        font-size: 14px;
+      }
+    }
   </style>
 </head>
 
 <body>
   <div id="loading">
-    <div class="loading-spinner"></div>
+    <div class="loading-container">
+      <img src="/icons/logo.svg" alt="Escape" class="loading-logo" />
+      <div class="loading-text">
+        <h1 class="loading-title">Escape</h1>
+        <p class="loading-tagline">Nature's Calm, Anywhere</p>
+      </div>
+    </div>
   </div>
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
