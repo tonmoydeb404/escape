@@ -1,3 +1,5 @@
+import { APP_CONFIG } from "../config/app";
+
 interface IconProps {
   size?: number;
   className?: string;
@@ -8,7 +10,7 @@ interface IconProps {
  * Dynamic app icon component that serves the most appropriate icon size
  * based on the requested dimensions and device capabilities
  */
-export function Icon({ size = 48, className = "", alt = "Escape" }: IconProps) {
+export function Icon({ size = 48, className = "", alt = APP_CONFIG.shortName }: IconProps) {
   // Determine the best icon to use based on size
   const getIconPath = (requestedSize: number): string => {
     // For very small icons, use iOS icons (they have the most size options)

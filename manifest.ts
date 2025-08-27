@@ -1,20 +1,20 @@
 import { ManifestOptions } from "vite-plugin-pwa";
 import iconsData from "./public/icons/icons.json";
+import { APP_CONFIG } from "./src/config/app";
 
 export const manifest: Partial<ManifestOptions> = {
-  name: "Escape - Nature's Calm, Anywhere",
-  short_name: "Escape",
-  description:
-    "Nature's Calm, Anywhere. Create your perfect ambient soundscape for focus, relaxation, and productivity. Mix nature sounds with a built-in timer.",
-  theme_color: "#1e293b",
-  background_color: "#0f172a",
+  name: APP_CONFIG.name,
+  short_name: APP_CONFIG.shortName,
+  description: APP_CONFIG.description,
+  theme_color: APP_CONFIG.theme.color,
+  background_color: APP_CONFIG.theme.backgroundColor,
   display: "standalone",
   orientation: "portrait",
   scope: "/",
   start_url: "/",
-  categories: ["productivity", "lifestyle", "utilities"],
-  lang: "en",
-  dir: "ltr",
+  categories: [...APP_CONFIG.categories],
+  lang: APP_CONFIG.lang,
+  dir: APP_CONFIG.dir,
 
   icons: iconsData.icons.map((icon) => ({
     src: `/icons/${icon.src}`,

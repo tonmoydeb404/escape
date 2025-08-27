@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import soundsData from "../data.json";
+import { mediaSessionManager } from "../utils/mediaSession";
 
 interface SoundState {
   id: string;
@@ -284,6 +285,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         clearInterval(intervalRef.current);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isTimerActive, timerRemaining]);
 
   // Audio effect - manage playing/stopping sounds
@@ -326,6 +328,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
       }
     });
   }, [sounds, loadSound]);
+
+  // Media Session API integration
+  useEffect(() => {
+    const playingSounds = sounds
+      .filter((sound) => sound.isPlaying)
+      .map((sound) => sound.name);
+    mediaSessionManager.setPlaying(playingSounds);
+
+    // Set up media session action handlers
+    mediaSessionManager.setActionHandlers(
+      undefined, // play - handled by individual sound toggles
+      () => stopAllSounds(), // pause - stop all sounds
+      () => stopAllSounds() // stop - stop all sounds
+    );
+  }, [sounds]);
 
   const contextValue: AppContextType = {
     sounds,

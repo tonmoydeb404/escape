@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { RefreshCw, X } from 'lucide-react';
 import clsx from 'clsx';
 import { usePWAUpdate } from '../utils/pwa';
+import { APP_CONFIG } from '../config/app';
 
 export function PWAUpdateNotification() {
   const { updateAvailable, updateApp } = usePWAUpdate();
@@ -36,7 +37,7 @@ export function PWAUpdateNotification() {
               Update Available
             </h3>
             <p className="text-green-100 text-xs mt-1 leading-relaxed">
-              A new version of Escape is ready. Restart to get the latest features and improvements.
+              A new version of {APP_CONFIG.shortName} is ready. Restart to get the latest features and improvements.
             </p>
             
             <div className="flex space-x-2 mt-3">

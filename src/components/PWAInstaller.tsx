@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Download, X } from 'lucide-react';
 import clsx from 'clsx';
+import { APP_CONFIG } from '../config/app';
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -99,7 +100,7 @@ export function PWAInstaller() {
           
           <div className="flex-1 min-w-0">
             <h3 className="text-white font-semibold text-sm">
-              Install Escape
+              Install {APP_CONFIG.shortName}
             </h3>
             <p className="text-blue-100 text-xs mt-1 leading-relaxed">
               Get the full app experience with offline access to your ambient sounds
