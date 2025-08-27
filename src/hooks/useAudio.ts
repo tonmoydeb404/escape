@@ -1,47 +1,56 @@
 import { Howl } from "howler";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useApp } from "../context/AppContext";
 
 export function useAudio() {
   const { state, dispatch } = useApp();
   const howlsRef = useRef<Record<string, Howl>>({});
 
-  useEffect(() => {
-    // Initialize Howl instances
-    state.sounds.forEach((sound) => {
-      if (!howlsRef.current[sound.id]) {
-        const howl = new Howl({
-          src: [sound.file],
-          loop: true,
-          volume: sound.volume,
-          preload: true,
-          html5: true,
-          onload: () => {
-            dispatch({ type: "SET_HOWL", soundId: sound.id, howl });
-          },
-          onloaderror: () => {
-            console.warn(`Failed to load ${sound.name}, using fallback tone`);
-          },
-        });
+  const loadSound = useCallback((soundId: string) => {
+    const sound = state.sounds.find(s => s.id === soundId);
+    if (!sound || sound.isLoading || sound.isLoaded) return;
 
-        howlsRef.current[sound.id] = howl;
+    dispatch({ type: 'START_LOADING_SOUND', soundId });
+
+    const howl = new Howl({
+      src: [sound.file],
+      loop: true,
+      volume: sound.volume,
+      preload: true,
+      html5: true,
+      onload: () => {
+        dispatch({ type: 'SOUND_LOADED', soundId, howl });
+        howlsRef.current[soundId] = howl;
+        
+        // Save to localStorage
+        const loadedSounds = JSON.parse(localStorage.getItem('loadedSounds') || '[]');
+        if (!loadedSounds.includes(soundId)) {
+          loadedSounds.push(soundId);
+          localStorage.setItem('loadedSounds', JSON.stringify(loadedSounds));
+        }
+      },
+      onloaderror: (id, error) => {
+        console.error(`Failed to load ${sound.name}:`, error);
+        dispatch({ type: 'SOUND_LOAD_ERROR', soundId });
       }
     });
+  }, [state.sounds, dispatch]);
 
-    return () => {
-      // Cleanup on unmount
-      Object.values(howlsRef.current).forEach((howl) => {
-        if (howl) {
-          howl.unload();
-        }
-      });
-    };
-  }, []);
+  // Auto-load sounds that were previously loaded (from localStorage)
+  useEffect(() => {
+    const loadedSounds = JSON.parse(localStorage.getItem('loadedSounds') || '[]');
+    
+    state.sounds.forEach(sound => {
+      if (loadedSounds.includes(sound.id) && !sound.isLoaded && !sound.isLoading) {
+        loadSound(sound.id);
+      }
+    });
+  }, [state.sounds, loadSound]);
 
   useEffect(() => {
     state.sounds.forEach((sound) => {
       const howl = howlsRef.current[sound.id];
-      if (howl) {
+      if (howl && sound.isLoaded) {
         howl.volume(sound.volume);
 
         if (sound.isPlaying && !howl.playing()) {
@@ -50,7 +59,9 @@ export function useAudio() {
         } else if (!sound.isPlaying && howl.playing()) {
           howl.fade(sound.volume, 0, 300);
           setTimeout(() => {
-            if (!sound.isPlaying) {
+            // Double check the state hasn't changed during fade
+            const currentSound = state.sounds.find(s => s.id === sound.id);
+            if (currentSound && !currentSound.isPlaying) {
               howl.pause();
             }
           }, 300);
@@ -71,5 +82,5 @@ export function useAudio() {
     dispatch({ type: "STOP_ALL_SOUNDS" });
   };
 
-  return { stopAllSounds };
+  return { stopAllSounds, loadSound };
 }

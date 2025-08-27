@@ -13,6 +13,8 @@ export function SoundGrid() {
           name={sound.name}
           isPlaying={sound.isPlaying}
           volume={sound.volume}
+          isLoaded={sound.isLoaded}
+          isLoading={sound.isLoading}
         />
       ))}
     </div>

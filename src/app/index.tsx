@@ -1,18 +1,18 @@
 import { useEffect } from "react";
-import { TimerBottomSheet } from "../components/TimerBottomSheet";
-import { TimerDisplay } from "../components/TimerDisplay";
 import { useApp } from "../context/AppContext";
 import { useAudio } from "../hooks/useAudio";
+import { useTimer } from "../hooks/useTimer";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { Footer } from "./Footer";
 import { Header } from "./Header";
 import { SoundGrid } from "./SoundGrid";
 
 function App() {
-  const { state, dispatch } = useApp();
+  const { state } = useApp();
   const { getItem, setItem } = useLocalStorage();
 
   useAudio();
+  useTimer();
 
   // Load saved preferences
   useEffect(() => {
@@ -34,10 +34,6 @@ function App() {
     setItem("soundPreferences", soundPreferences);
   }, [state.sounds, setItem]);
 
-  const handleTimerClick = () => {
-    dispatch({ type: "TOGGLE_TIMER_BOTTOM_SHEET" });
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/20 to-gray-900">
       {/* Background effects */}
@@ -45,14 +41,10 @@ function App() {
       <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/20 via-transparent to-transparent" />
 
       <div className="relative z-10 p-4 pb-8">
-        <Header onTimerClick={handleTimerClick} />
+        <Header />
         <SoundGrid />
         <Footer />
       </div>
-
-      {/* Overlays */}
-      <TimerDisplay />
-      <TimerBottomSheet />
     </div>
   );
 }

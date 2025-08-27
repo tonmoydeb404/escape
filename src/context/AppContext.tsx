@@ -7,6 +7,8 @@ interface SoundState {
   file: string;
   isPlaying: boolean;
   volume: number;
+  isLoaded: boolean;
+  isLoading: boolean;
   howl?: any;
 }
 
@@ -27,6 +29,9 @@ type AppAction =
   | { type: 'TOGGLE_SOUND'; soundId: string }
   | { type: 'SET_VOLUME'; soundId: string; volume: number }
   | { type: 'SET_HOWL'; soundId: string; howl: any }
+  | { type: 'START_LOADING_SOUND'; soundId: string }
+  | { type: 'SOUND_LOADED'; soundId: string; howl: any }
+  | { type: 'SOUND_LOAD_ERROR'; soundId: string }
   | { type: 'START_TIMER'; duration: number }
   | { type: 'TICK_TIMER' }
   | { type: 'STOP_TIMER' }
@@ -39,6 +44,8 @@ const initialState: AppState = {
     ...sound,
     isPlaying: false,
     volume: 0.7,
+    isLoaded: false,
+    isLoading: false,
   })),
   timer: {
     duration: 0,
@@ -77,6 +84,36 @@ function appReducer(state: AppState, action: AppAction): AppState {
         sounds: state.sounds.map(sound =>
           sound.id === action.soundId
             ? { ...sound, howl: action.howl }
+            : sound
+        ),
+      };
+
+    case 'START_LOADING_SOUND':
+      return {
+        ...state,
+        sounds: state.sounds.map(sound =>
+          sound.id === action.soundId
+            ? { ...sound, isLoading: true, isLoaded: false }
+            : sound
+        ),
+      };
+
+    case 'SOUND_LOADED':
+      return {
+        ...state,
+        sounds: state.sounds.map(sound =>
+          sound.id === action.soundId
+            ? { ...sound, isLoading: false, isLoaded: true, howl: action.howl }
+            : sound
+        ),
+      };
+
+    case 'SOUND_LOAD_ERROR':
+      return {
+        ...state,
+        sounds: state.sounds.map(sound =>
+          sound.id === action.soundId
+            ? { ...sound, isLoading: false, isLoaded: false, howl: null }
             : sound
         ),
       };

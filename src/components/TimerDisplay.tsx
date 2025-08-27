@@ -1,8 +1,7 @@
-import React from 'react';
-import { Clock, X } from 'lucide-react';
-import { useApp } from '../context/AppContext';
-import { useTimer } from '../hooks/useTimer';
-import clsx from 'clsx';
+import clsx from "clsx";
+import { Clock, X } from "lucide-react";
+import { useApp } from "../context/AppContext";
+import { useTimer } from "../hooks/useTimer";
 
 export function TimerDisplay() {
   const { state } = useApp();
@@ -42,7 +41,13 @@ export function TimerDisplay() {
             className="transition-all duration-1000 ease-out"
           />
           <defs>
-            <linearGradient id="timerGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <linearGradient
+              id="timerGradient"
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="0%"
+            >
               <stop offset="0%" stopColor="#3B82F6" />
               <stop offset="100%" stopColor="#14B8A6" />
             </linearGradient>
@@ -61,11 +66,11 @@ export function TimerDisplay() {
         <button
           onClick={stopTimer}
           className={clsx(
-            'absolute -top-2 -right-2 p-1 rounded-full',
-            'bg-red-500/80 hover:bg-red-500 transition-colors duration-200',
-            'backdrop-blur-sm border border-white/20'
+            "absolute -top-2 -right-2 p-1 rounded-full",
+            "bg-red-500/80 hover:bg-red-500 transition-colors duration-200",
+            "backdrop-blur-sm border border-white/20"
           )}
-          style={{ minWidth: '24px', minHeight: '24px' }}
+          style={{ minWidth: "24px", minHeight: "24px" }}
         >
           <X size={12} className="text-white" />
         </button>

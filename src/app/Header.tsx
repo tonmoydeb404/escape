@@ -1,14 +1,12 @@
-import clsx from "clsx";
-import { Timer, Waves } from "lucide-react";
+import { Waves } from "lucide-react";
+import { TimerBottomSheet } from "../components/TimerBottomSheet";
 import { useApp } from "../context/AppContext";
 
-interface HeaderProps {
-  onTimerClick: () => void;
-}
+interface HeaderProps {}
 
-export function Header({ onTimerClick }: HeaderProps) {
+export function Header(_props: HeaderProps) {
   const { state } = useApp();
-  
+
   const activeSoundsCount = state.sounds.filter((s) => s.isPlaying).length;
 
   return (
@@ -18,7 +16,7 @@ export function Header({ onTimerClick }: HeaderProps) {
           <Waves size={24} className="text-blue-400" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-white">Nature Sounds</h1>
+          <h1 className="text-2xl font-bold text-white">Escape</h1>
           <p className="text-sm text-gray-400">
             {activeSoundsCount > 0
               ? `${activeSoundsCount} sound${
@@ -29,19 +27,7 @@ export function Header({ onTimerClick }: HeaderProps) {
         </div>
       </div>
 
-      <button
-        onClick={onTimerClick}
-        className={clsx(
-          "p-3 rounded-2xl transition-all duration-200 transform",
-          "active:scale-90 hover:scale-105",
-          "backdrop-blur-sm border border-white/10",
-          "bg-gradient-to-br from-purple-500/20 to-pink-500/20",
-          "hover:from-purple-500/30 hover:to-pink-500/30"
-        )}
-        style={{ minWidth: "48px", minHeight: "48px" }}
-      >
-        <Timer size={24} className="text-purple-400" />
-      </button>
+      <TimerBottomSheet />
     </div>
   );
 }
