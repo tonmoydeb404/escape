@@ -1,6 +1,9 @@
 import { useEffect } from "react";
 import { useApp } from "../context/AppContext";
 import { useLocalStorage } from "../hooks/useLocalStorage";
+import { useURLPresets } from "../hooks/useURLPresets";
+import { PWAInstaller } from "../components/PWAInstaller";
+import { PWAUpdateNotification } from "../components/PWAUpdateNotification";
 import { Footer } from "./Footer";
 import { Header } from "./Header";
 import { SoundGrid } from "./SoundGrid";
@@ -8,6 +11,9 @@ import { SoundGrid } from "./SoundGrid";
 function App() {
   const { sounds } = useApp();
   const { getItem, setItem } = useLocalStorage();
+  
+  // Handle URL-based presets for PWA shortcuts
+  useURLPresets();
 
   // Load saved preferences
   useEffect(() => {
@@ -40,6 +46,10 @@ function App() {
         <SoundGrid />
         <Footer />
       </div>
+      
+      {/* PWA Components */}
+      <PWAInstaller />
+      <PWAUpdateNotification />
     </div>
   );
 }

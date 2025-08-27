@@ -1,4 +1,3 @@
-import { Waves } from "lucide-react";
 import { TimerBottomSheet } from "../components/TimerBottomSheet";
 import { useApp } from "../context/AppContext";
 
@@ -12,9 +11,7 @@ export function Header(_props: HeaderProps) {
   return (
     <div className="flex items-center justify-between mb-16 max-w-4xl mx-auto pt-4">
       <div className="flex items-center space-x-3">
-        <div className="p-3 rounded-2xl bg-gradient-to-br from-blue-500/20 to-teal-500/20 backdrop-blur-sm border border-white/10">
-          <Waves size={24} className="text-blue-400" />
-        </div>
+        <img alt="Escape" src="/icons/logo.svg" width={45} />
         <div>
           <h1 className="text-2xl font-bold text-white">Escape</h1>
           <p className="text-sm text-gray-400">
