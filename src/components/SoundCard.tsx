@@ -139,13 +139,6 @@ export function SoundCard({
             {Math.round(volume * 100)}%
           </span>
         </div>
-
-        {/* Loading state message */}
-        {isLoading && (
-          <div className="text-center py-2">
-            <p className="text-yellow-400 text-sm">Loading sound...</p>
-          </div>
-        )}
       </div>
     </div>
   );

@@ -209,36 +209,54 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // Audio functions
   const loadSound = useCallback(
-    (soundId: string) => {
+    async (soundId: string) => {
       const sound = sounds.find((s) => s.id === soundId);
       if (!sound || sound.isLoading || sound.isLoaded) return;
 
       startLoadingSound(soundId);
 
-      const howl = new Howl({
-        src: [sound.file],
-        loop: true,
-        volume: sound.volume,
-        preload: true,
-        html5: true,
-        onload: () => {
-          soundLoaded(soundId, howl);
-          howlsRef.current[soundId] = howl;
+      try {
+        // Check if audio is already cached by service worker
+        const cache = await caches.open('audio-cache');
+        const cachedResponse = await cache.match(sound.file);
+        
+        if (!cachedResponse) {
+          // If not cached, manually cache it first
+          await cache.add(sound.file);
+          console.log(`Cached audio: ${sound.name}`);
+        } else {
+          console.log(`Audio already cached: ${sound.name}`);
+        }
 
-          // Save to localStorage
-          const loadedSounds = JSON.parse(
-            localStorage.getItem("loadedSounds") || "[]"
-          );
-          if (!loadedSounds.includes(soundId)) {
-            loadedSounds.push(soundId);
-            localStorage.setItem("loadedSounds", JSON.stringify(loadedSounds));
-          }
-        },
-        onloaderror: (_, error) => {
-          console.error(`Failed to load ${sound.name}:`, error);
-          soundLoadError(soundId);
-        },
-      });
+        // Create Howl instance (will use cached version if available)
+        const howl = new Howl({
+          src: [sound.file],
+          loop: true,
+          volume: sound.volume,
+          preload: true,
+          html5: true,
+          onload: () => {
+            soundLoaded(soundId, howl);
+            howlsRef.current[soundId] = howl;
+
+            // Save to localStorage
+            const loadedSounds = JSON.parse(
+              localStorage.getItem("loadedSounds") || "[]"
+            );
+            if (!loadedSounds.includes(soundId)) {
+              loadedSounds.push(soundId);
+              localStorage.setItem("loadedSounds", JSON.stringify(loadedSounds));
+            }
+          },
+          onloaderror: (_, error) => {
+            console.error(`Failed to load ${sound.name}:`, error);
+            soundLoadError(soundId);
+          },
+        });
+      } catch (error) {
+        console.error(`Failed to cache/load ${sound.name}:`, error);
+        soundLoadError(soundId);
+      }
     },
     [sounds]
   );

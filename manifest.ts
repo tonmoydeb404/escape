@@ -3,7 +3,7 @@ import iconsData from "./public/icons/icons.json";
 import { APP_CONFIG } from "./src/config/app";
 
 export const manifest: Partial<ManifestOptions> = {
-  name: APP_CONFIG.name,
+  name: APP_CONFIG.shortName,
   short_name: APP_CONFIG.shortName,
   description: APP_CONFIG.description,
   theme_color: APP_CONFIG.theme.color,
