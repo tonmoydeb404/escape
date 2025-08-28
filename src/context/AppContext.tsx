@@ -217,9 +217,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
       try {
         // Check if audio is already cached by service worker
-        const cache = await caches.open('audio-cache');
+        const cache = await caches.open("audio-cache");
         const cachedResponse = await cache.match(sound.file);
-        
+
         if (!cachedResponse) {
           // If not cached, manually cache it first
           await cache.add(sound.file);
@@ -234,7 +234,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
           loop: true,
           volume: sound.volume,
           preload: true,
-          html5: true,
+          html5: false,
           onload: () => {
             soundLoaded(soundId, howl);
             howlsRef.current[soundId] = howl;
@@ -245,7 +245,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
             );
             if (!loadedSounds.includes(soundId)) {
               loadedSounds.push(soundId);
-              localStorage.setItem("loadedSounds", JSON.stringify(loadedSounds));
+              localStorage.setItem(
+                "loadedSounds",
+                JSON.stringify(loadedSounds)
+              );
             }
           },
           onloaderror: (_, error) => {
