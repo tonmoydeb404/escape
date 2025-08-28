@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from "react";
 
 /**
  * PWA utilities for service worker registration and update handling
  */
 
 export interface PWAUpdateEvent {
-  type: 'update-available' | 'update-ready' | 'offline-ready';
+  type: "update-available" | "update-ready" | "offline-ready";
   registration?: ServiceWorkerRegistration;
 }
 
@@ -20,29 +20,29 @@ class PWAManager {
   }
 
   private async init() {
-    if ('serviceWorker' in navigator) {
+    if ("serviceWorker" in navigator) {
       try {
         // The service worker will be automatically registered by vite-plugin-pwa
         // We just need to listen for updates
         this.setupUpdateListener();
       } catch (error) {
-        console.error('SW registration failed:', error);
+        console.error("SW registration failed:", error);
       }
     }
   }
 
   private setupUpdateListener() {
     // Listen for service worker updates
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.addEventListener('message', (event) => {
-        if (event.data && event.data.type === 'SW_UPDATE_AVAILABLE') {
-          this.notifyListeners({ type: 'update-available' });
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.addEventListener("message", (event) => {
+        if (event.data && event.data.type === "SW_UPDATE_AVAILABLE") {
+          this.notifyListeners({ type: "update-available" });
         }
       });
 
       navigator.serviceWorker.ready.then((registration) => {
         this.registration = registration;
-        
+
         // Check for updates periodically
         setInterval(() => {
           registration.update();
@@ -62,31 +62,33 @@ class PWAManager {
   }
 
   private notifyListeners(event: PWAUpdateEvent) {
-    this.listeners.forEach(listener => listener(event));
+    this.listeners.forEach((listener) => listener(event));
   }
 
   public async updateApp() {
     if (this.registration && this.registration.waiting) {
       // Send message to waiting SW to skip waiting
-      this.registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+      this.registration.waiting.postMessage({ type: "SKIP_WAITING" });
       // Reload the page to activate the new service worker
       window.location.reload();
     }
   }
 
   public isInstalled(): boolean {
-    return window.matchMedia('(display-mode: standalone)').matches ||
-           (window.navigator as any).standalone === true;
+    return (
+      window.matchMedia("(display-mode: standalone)").matches ||
+      (window.navigator as any).standalone === true
+    );
   }
 
   public async getInstallationStatus() {
     const isInstalled = this.isInstalled();
-    const isInstallable = 'BeforeInstallPromptEvent' in window;
-    
+    const isInstallable = "BeforeInstallPromptEvent" in window;
+
     return {
       isInstalled,
       isInstallable,
-      canInstall: isInstallable && !isInstalled
+      canInstall: isInstallable && !isInstalled,
     };
   }
 }
@@ -96,20 +98,20 @@ export const pwaManager = new PWAManager();
 // Hook for React components
 export function usePWAUpdate() {
   const [updateAvailable, setUpdateAvailable] = useState(false);
-  
+
   useEffect(() => {
     const unsubscribe = pwaManager.onUpdate((event) => {
-      if (event.type === 'update-available') {
+      if (event.type === "update-available") {
         setUpdateAvailable(true);
       }
     });
-    
+
     return unsubscribe;
   }, []);
-  
+
   const updateApp = () => {
     pwaManager.updateApp();
   };
-  
+
   return { updateAvailable, updateApp };
 }
