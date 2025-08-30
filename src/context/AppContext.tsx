@@ -234,7 +234,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
           loop: true,
           volume: sound.volume,
           preload: true,
-          html5: false,
+          html5: true,
           onload: () => {
             soundLoaded(soundId, howl);
             howlsRef.current[soundId] = howl;
